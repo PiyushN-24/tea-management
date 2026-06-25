@@ -2,14 +2,18 @@ import api from "./client";
 
 export async function getOrders(){
 
-const userId=1;
+const user=
+JSON.parse(
+localStorage.getItem(
+"user"
+)||"{}"
+);
 
 const res=
 await api.get(
-`/orders/me?user_id=${userId}`
+`/orders/me?user_id=${user.id}`
 );
 
 return res.data;
 
 }
-

@@ -3,29 +3,21 @@ useEffect,
 useState
 } from "react";
 
+import api from "../api/client";
+
 import {
 useNavigate
 } from "react-router-dom";
 
-import api from "../api/client";
-
 export default function AdminDashboard(){
 
-const navigate=
+const nav=
 useNavigate();
 
-const [
-users,
-setUsers
+const[
+rows,
+setRows
 ]=useState<any[]>([]);
-
-const [
-summary,
-setSummary
-]=useState({
-tea:0,
-coffee:0
-});
 
 useEffect(()=>{
 
@@ -35,78 +27,99 @@ load();
 
 async function load(){
 
-try{
-
-const consumption=
+const res=
 await api.get(
 "/admin/consumption"
 );
 
-setUsers(
-consumption.data
-);
-
-const totals=
-await api.get(
-"/admin/summary"
-);
-
-setSummary(
-totals.data
-);
-
-}catch(e){
-
-console.log(
-e
+setRows(
+res.data
 );
 
 }
 
-}
-
-function logout(){
-
-localStorage.removeItem(
-"user"
+const tea=
+rows.reduce(
+(a,b)=>a+b.tea,
+0
 );
 
-navigate(
-"/"
+const coffee=
+rows.reduce(
+(a,b)=>a+b.coffee,
+0
 );
 
-}
+const total=
+tea+coffee;
 
 return(
 
-<div className="p-10">
+<div className="min-h-screen bg-slate-100">
 
-<div className="flex justify-between">
+<header
+className="
+bg-white
+border-b
+px-10
+py-5
+flex
+justify-between
+items-center
+"
+>
 
-<h1 className="text-3xl">
+<div>
 
-☕ Admin Dashboard
+<h1
+className="
+text-4xl
+font-bold
+text-slate-800
+"
+>
+
+☕ Tea Admin
 
 </h1>
 
-<div className="space-x-2">
+<p
+className="
+text-gray-500
+"
+>
+
+Daily Consumption Dashboard
+
+</p>
+
+</div>
+
+<div
+className="
+flex
+gap-3
+"
+>
 
 <button
 
-className="
-bg-blue-600
-text-white
-px-4
-py-2
-"
-
 onClick={()=>{
 
-navigate(
+nav(
 "/admin/users"
 )
 
 }}
+
+className="
+bg-green-600
+hover:bg-green-700
+text-white
+px-5
+py-3
+rounded-xl
+"
 
 >
 
@@ -116,16 +129,23 @@ Create User
 
 <button
 
+onClick={()=>{
+
+localStorage.clear();
+
+nav(
+"/"
+);
+
+}}
+
 className="
 bg-red-500
 text-white
-px-4
-py-2
+px-5
+py-3
+rounded-xl
 "
-
-onClick={
-logout
-}
 
 >
 
@@ -135,127 +155,99 @@ Logout
 
 </div>
 
-</div>
+</header>
 
 <div
 className="
 grid
 grid-cols-3
-gap-4
-mt-8
+gap-6
+p-10
+"
+>
+
+<Card
+title="Tea"
+value={tea}
+/>
+
+<Card
+title="Coffee"
+value={coffee}
+/>
+
+<Card
+title="Total"
+value={total}
+/>
+
+</div>
+
+<div
+className="
+px-10
+pb-10
 "
 >
 
 <div
 className="
+bg-white
+rounded-2xl
 shadow
-p-6
-rounded
+overflow-hidden
 "
 >
-
-Tea
-
-<h2
-className="
-text-3xl
-"
->
-
-{
-summary.tea
-}
-
-</h2>
-
-</div>
 
 <div
 className="
-shadow
 p-6
-rounded
-"
->
-
-Coffee
-
-<h2
-className="
-text-3xl
-"
->
-
-{
-summary.coffee
-}
-
-</h2>
-
-</div>
-
-<div
-className="
-shadow
-p-6
-rounded
-"
->
-
-Total
-
-<h2
-className="
-text-3xl
-"
->
-
-{
-summary.tea+
-summary.coffee
-}
-
-</h2>
-
-</div>
-
-</div>
-
-<div
-className="
-mt-10
-"
->
-
-<h2
-className="
 text-2xl
-mb-4
+font-bold
 "
 >
 
 User Consumption
 
-</h2>
+</div>
 
 <table
 className="
 w-full
-border
 "
 >
 
 <thead>
 
-<tr>
+<tr
+className="
+bg-slate-100
+"
+>
 
-<th>User</th>
+<th className="p-4">
 
-<th>Tea</th>
+User
 
-<th>Coffee</th>
+</th>
 
-<th>Total</th>
+<th>
+
+Tea
+
+</th>
+
+<th>
+
+Coffee
+
+</th>
+
+<th>
+
+Total
+
+</th>
 
 </tr>
 
@@ -265,19 +257,29 @@ border
 
 {
 
-users.map(
-(u:any)=>(
+rows.map(
+(r:any)=>(
 
 <tr
 key={
-u.user
+r.user
 }
+
+className="
+border-t
+hover:bg-gray-50
+"
 >
 
-<td>
+<td
+className="
+p-4
+font-medium
+"
+>
 
 {
-u.user
+r.user
 }
 
 </td>
@@ -285,7 +287,7 @@ u.user
 <td>
 
 {
-u.tea
+r.tea
 }
 
 </td>
@@ -293,15 +295,19 @@ u.tea
 <td>
 
 {
-u.coffee
+r.coffee
 }
 
 </td>
 
-<td>
+<td
+className="
+font-bold
+"
+>
 
 {
-u.total
+r.total
 }
 
 </td>
@@ -317,6 +323,58 @@ u.total
 </tbody>
 
 </table>
+
+</div>
+
+</div>
+
+</div>
+
+);
+
+}
+
+function Card({
+
+title,
+value
+
+}:any){
+
+return(
+
+<div
+className="
+bg-white
+rounded-2xl
+shadow
+p-8
+"
+>
+
+<div
+className="
+text-gray-500
+"
+>
+
+{
+title
+}
+
+</div>
+
+<div
+className="
+text-6xl
+font-bold
+mt-4
+"
+>
+
+{
+value
+}
 
 </div>
 
