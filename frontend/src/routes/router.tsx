@@ -1,15 +1,12 @@
-import {
-  createBrowserRouter,
-  Navigate
-}
+import {createBrowserRouter, Navigate}
 from "react-router-dom";
-
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import MyOrders from "../pages/MyOrders";
 import AdminDashboard from "../pages/AdminDashboard";
 import CreateUser from "../pages/CreateUser";
-
+import ResetPassword
+from "../pages/ResetPassword";
 
 function AdminRoute({
   children
@@ -72,6 +69,11 @@ createBrowserRouter([
         <CreateUser />
       </AdminRoute>
     )
+  },
+
+  {
+    path:"/reset",
+    element:<ResetPassword/>
   },
 
   {

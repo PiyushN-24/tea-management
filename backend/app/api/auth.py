@@ -45,3 +45,81 @@ def login(
         "email": user.email,
         "role": user.role
     }
+
+@router.put(
+    "/reset-password"
+)
+def reset_password(
+
+    email: str,
+
+    old: str,
+
+    new: str,
+
+    db: Session =
+    Depends(
+        get_db
+    )
+
+):
+
+    u = (
+
+        db.query(
+            User
+        )
+
+        .filter(
+
+            User.email ==
+            email
+
+        )
+
+        .first()
+
+    )
+
+
+    if not u:
+
+        raise HTTPException(
+
+            status_code=404,
+
+            detail=
+            "User not found"
+
+        )
+
+
+    if u.password != old:
+
+        raise HTTPException(
+
+            status_code=401,
+
+            detail=
+            "Old password incorrect"
+
+        )
+
+
+    u.password = new
+
+
+    db.commit()
+
+
+    db.refresh(
+        u
+    )
+
+
+    return {
+
+        "message":
+        "Password updated"
+
+    }

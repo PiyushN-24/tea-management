@@ -1,180 +1,260 @@
 import {
-useState
+  useState
 }
 from "react";
+
+import {
+  useNavigate
+}
+from "react-router-dom";
 
 import api
 from "../api/client";
 
-export default function CreateUser(){
 
-const[
-form,
-setForm
-]=useState({
+export default function CreateUser() {
 
-name:"",
-email:"",
-password:"",
-role:"user"
+  const nav =
+    useNavigate();
 
-});
+  const [
+    form,
+    setForm
+  ] = useState({
 
-async function save(){
+    name: "",
 
-await api.post(
+    employee_code: "",
 
-"/admin/users",
+    email: "",
 
-form
+    password: "",
 
-);
+    role: "user"
 
-alert(
-"created"
-);
+  });
 
-}
 
-return(
+  async function save() {
 
-<div
-className="
-p-10
-"
->
+    await api.post(
+      "/admin/users",
+      form
+    );
 
-<h1>
+    alert(
+      "User Created"
+    );
 
-Create User
+    nav(
+      "/admin"
+    );
 
-</h1>
+  }
 
-<input
 
-placeholder="Name"
+  return (
 
-className="
-border
-block
-mb-3
-"
+    <div
+      className="
+      min-h-screen
+      bg-gray-100
+      "
+    >
 
-onChange={(e)=>
+      <div
+        className="
+        max-w-xl
+        mx-auto
+        mt-10
+        bg-white
+        shadow
+        rounded-xl
+        p-8
+        "
+      >
 
-setForm({
+        <h1
+          className="
+          text-3xl
+          mb-6
+          "
+        >
 
-...form,
+          Create User
 
-name:
-e.target.value
+        </h1>
 
-})
 
-}
+        {
 
-/>
+          [
 
-<input
+            "name",
 
-placeholder="Email"
+            "employee_code",
 
-className="
-border
-block
-mb-3
-"
+            "email",
 
-onChange={(e)=>
+            "password"
 
-setForm({
+          ]
 
-...form,
+          .map(
 
-email:
-e.target.value
+            (
 
-})
+              f
 
-}
+            ) => (
 
-/>
+              <input
 
-<input
+                key={
+                  f
+                }
 
-placeholder="Password"
+                placeholder={
+                  f
+                }
 
-className="
-border
-block
-mb-3
-"
+                className="
+                border
+                w-full
+                mb-4
+                p-3
+                "
 
-onChange={(e)=>
+                onChange={
 
-setForm({
+                  (
 
-...form,
+                    e
 
-password:
-e.target.value
+                  ) =>
 
-})
+                    setForm({
 
-}
+                      ...form,
 
-/>
+                      [f]:
+                      e.target.value
 
-<select
+                    })
 
-onChange={(e)=>
+                }
 
-setForm({
+              />
 
-...form,
+            )
 
-role:
-e.target.value
+          )
 
-})
+        }
 
-}
 
->
+        <select
 
-<option>
+          className="
+          w-full
+          p-3
+          border
+          "
 
-user
+          onChange={
 
-</option>
+            (
 
-<option>
+              e
 
-admin
+            ) =>
 
-</option>
+              setForm({
 
-</select>
+                ...form,
 
-<button
+                role:
+                e.target.value
 
-onClick={save}
+              })
 
-className="
-bg-green-600
-text-white
-mt-4
-p-2
-"
+          }
 
->
+        >
 
-Create
+          <option>
 
-</button>
+            user
 
-</div>
+          </option>
 
-);
+          <option>
+
+            admin
+
+          </option>
+
+        </select>
+
+
+        <div
+          className="
+          flex
+          gap-3
+          mt-6
+          "
+        >
+
+          <button
+
+            className="
+            flex-1
+            border
+            p-3
+            rounded
+            "
+
+            onClick={() =>
+
+              nav(
+                "/admin"
+              )
+
+            }
+
+          >
+
+            Back
+
+          </button>
+
+
+          <button
+
+            className="
+            flex-1
+            bg-green-600
+            text-white
+            p-3
+            rounded
+            "
+
+            onClick={
+              save
+            }
+
+          >
+
+            Create
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
 
 }

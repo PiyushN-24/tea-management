@@ -4,6 +4,8 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 
+from datetime import date, timedelta
+
 import pandas as pd
 
 from app.db.session import get_db
@@ -18,6 +20,67 @@ router = APIRouter(
 )
 
 
+def calc(
+    db,
+    days
+):
+
+    start = (
+        date.today()
+        -
+        timedelta(days=days)
+    )
+
+    rows = (
+
+        db.query(
+
+            Order.beverage,
+
+            func.sum(
+                Order.quantity
+            )
+
+        )
+
+        .filter(
+
+            Order.order_date
+            >=
+            start
+
+        )
+
+        .group_by(
+
+            Order.beverage
+
+        )
+
+        .all()
+
+    )
+
+    tea = 0
+    coffee = 0
+
+    for r in rows:
+
+        if r[0] == "tea":
+            tea = r[1]
+
+        if r[0] == "coffee":
+            coffee = r[1]
+
+    return {
+
+        "tea": tea,
+
+        "coffee": coffee
+
+    }
+
+
 @router.get("/summary")
 def summary(
     db: Session = Depends(get_db)
@@ -25,7 +88,9 @@ def summary(
 
     tea = (
         db.query(
-            func.sum(Order.quantity)
+            func.sum(
+                Order.quantity
+            )
         )
         .filter(
             Order.beverage == "tea"
@@ -35,7 +100,9 @@ def summary(
 
     coffee = (
         db.query(
-            func.sum(Order.quantity)
+            func.sum(
+                Order.quantity
+            )
         )
         .filter(
             Order.beverage == "coffee"
@@ -44,8 +111,11 @@ def summary(
     )
 
     return {
+
         "tea": tea or 0,
+
         "coffee": coffee or 0
+
     }
 
 
@@ -54,19 +124,27 @@ def export(
     db: Session = Depends(get_db)
 ):
 
-    orders = db.query(
-        Order
-    ).all()
+    orders = (
+        db.query(
+            Order
+        )
+        .all()
+    )
 
     rows = []
 
     for o in orders:
 
         rows.append({
+
             "id": o.id,
+
             "user": o.user_id,
+
             "drink": o.beverage,
+
             "qty": o.quantity
+
         })
 
     df = pd.DataFrame(
@@ -81,9 +159,13 @@ def export(
     )
 
     return FileResponse(
+
         path,
+
         media_type="text/csv",
+
         filename="orders.csv"
+
     )
 
 
@@ -102,6 +184,8 @@ def create_user(
 
         name=data.name,
 
+        employee_code=data.employee_code,
+
         email=data.email,
 
         password=data.password,
@@ -110,7 +194,9 @@ def create_user(
 
     )
 
-    db.add(user)
+    db.add(
+        user
+    )
 
     db.commit()
 
@@ -205,3 +291,240 @@ def consumption(
         })
 
     return result
+
+
+@router.get("/search")
+def search_user(
+
+    query: str,
+
+    db: Session = Depends(
+        get_db
+    )
+
+):
+
+    three_months = (
+
+        date.today()
+
+        -
+
+        timedelta(
+            days=90
+        )
+
+    )
+
+    users = (
+
+        db.query(
+
+            User,
+
+            Order
+
+        )
+
+        .join(
+
+            Order,
+
+            User.id ==
+            Order.user_id
+
+        )
+
+        .filter(
+
+            (
+                User.name.ilike(
+                    f"%{query}%"
+                )
+            )
+
+            |
+
+            (
+                User.email.ilike(
+                    f"%{query}%"
+                )
+            )
+
+            |
+
+            (
+                User.employee_code.ilike(
+                    f"%{query}%"
+                )
+            )
+
+        )
+
+        .filter(
+
+            Order.order_date
+            >=
+            three_months
+
+        )
+
+        .all()
+
+    )
+
+    result = []
+
+    for u, o in users:
+
+        result.append({
+
+            "user":
+            u.name,
+
+            "employee":
+            u.employee_code,
+
+            "email":
+            u.email,
+
+            "drink":
+            o.beverage,
+
+            "qty":
+            o.quantity,
+
+            "date":
+            o.order_date
+
+        })
+
+    return result
+
+
+@router.get("/weekly")
+def weekly(
+
+    db: Session =
+    Depends(
+        get_db
+    )
+
+):
+
+    return calc(
+        db,
+        7
+    )
+
+
+@router.get("/monthly")
+def monthly(
+
+    db: Session =
+    Depends(
+        get_db
+    )
+
+):
+
+    return calc(
+        db,
+        30
+    )
+
+
+@router.get("/compare")
+def compare(
+
+    day: str,
+
+    db: Session =
+    Depends(
+        get_db
+    )
+
+):
+
+    selected = (
+        date.fromisoformat(
+            day
+        )
+    )
+
+    today = (
+        date.today()
+    )
+
+    def one_day(
+
+        d
+
+    ):
+
+        rows = (
+
+            db.query(
+
+                Order.beverage,
+
+                func.sum(
+                    Order.quantity
+                )
+
+            )
+
+            .filter(
+
+                Order.order_date
+                ==
+                d
+
+            )
+
+            .group_by(
+
+                Order.beverage
+
+            )
+
+            .all()
+
+        )
+
+        tea = 0
+        coffee = 0
+
+        for r in rows:
+
+            if r[0] == "tea":
+                tea = r[1]
+
+            if r[0] == "coffee":
+                coffee = r[1]
+
+        return {
+
+            "tea":
+            tea,
+
+            "coffee":
+            coffee
+
+        }
+
+    return {
+
+        "today":
+
+        one_day(
+            today
+        ),
+
+        "selected":
+
+        one_day(
+            selected
+        )
+
+    }

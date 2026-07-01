@@ -237,7 +237,7 @@ w-full
 p-3
 "
 
-onClick={()=>
+onClick={() =>
 
 navigate(
 "/orders"
@@ -248,6 +248,30 @@ navigate(
 >
 
 My Orders
+
+</button>
+
+
+<button
+
+className="
+mt-3
+border
+w-full
+p-3
+"
+
+onClick={() => {
+
+navigate(
+"/reset"
+);
+
+}}
+
+>
+
+Reset Password
 
 </button>
 

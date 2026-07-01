@@ -1,59 +1,155 @@
 import {
-useEffect,
-useState
+  useEffect,
+  useState
 } from "react";
 
 import api from "../api/client";
 
 import {
-useNavigate
+  useNavigate
 } from "react-router-dom";
 
-export default function AdminDashboard(){
 
-const nav=
-useNavigate();
+export default function AdminDashboard() {
 
-const[
-rows,
-setRows
-]=useState<any[]>([]);
+  const nav =
+    useNavigate();
 
-useEffect(()=>{
+  const [
+    rows,
+    setRows
+  ] = useState<any[]>([]);
 
-load();
+  const [
+    query,
+    setQuery
+  ] = useState("");
 
-},[]);
+  const [
+    history,
+    setHistory
+  ] = useState<any[]>([]);
 
-async function load(){
+  const [
+    weekly,
+    setWeekly
+  ] = useState({
+    tea: 0,
+    coffee: 0
+  });
 
-const res=
-await api.get(
-"/admin/consumption"
-);
+  const [
+    monthly,
+    setMonthly
+  ] = useState({
+    tea: 0,
+    coffee: 0
+  });
 
-setRows(
-res.data
-);
+  const [
+    compare,
+    setCompare
+  ] = useState<any>();
 
-}
+  const [
+    day,
+    setDay
+  ] = useState("");
 
-const tea=
-rows.reduce(
-(a,b)=>a+b.tea,
-0
-);
 
-const coffee=
-rows.reduce(
-(a,b)=>a+b.coffee,
-0
-);
+  useEffect(() => {
 
-const total=
-tea+coffee;
+    load();
 
-return(
+  }, []);
+
+
+  async function load() {
+
+    const res =
+      await api.get(
+        "/admin/consumption"
+      );
+
+    setRows(
+      res.data
+    );
+
+
+    const w =
+      await api.get(
+        "/admin/weekly"
+      );
+
+    setWeekly(
+      w.data
+    );
+
+
+    const m =
+      await api.get(
+        "/admin/monthly"
+      );
+
+    setMonthly(
+      m.data
+    );
+
+  }
+
+
+  async function search() {
+
+    const res =
+      await api.get(
+
+        `/admin/search?query=${query}`
+
+      );
+
+    setHistory(
+      res.data
+    );
+
+  }
+
+
+  async function compareDate() {
+
+    const res =
+
+      await api.get(
+
+        `/admin/compare?day=${day}`
+
+      );
+
+    setCompare(
+      res.data
+    );
+
+  }
+
+
+  const tea =
+    rows.reduce(
+      (a, b) =>
+        a + b.tea,
+      0
+    );
+
+  const coffee =
+    rows.reduce(
+      (a, b) =>
+        a + b.coffee,
+      0
+    );
+
+  const total =
+    tea + coffee;
+
+
+  return (
 
 <div className="min-h-screen bg-slate-100">
 
@@ -75,7 +171,6 @@ items-center
 className="
 text-4xl
 font-bold
-text-slate-800
 "
 >
 
@@ -95,6 +190,7 @@ Daily Consumption Dashboard
 
 </div>
 
+
 <div
 className="
 flex
@@ -104,7 +200,7 @@ gap-3
 
 <button
 
-onClick={()=>{
+onClick={() => {
 
 nav(
 "/admin/users"
@@ -114,7 +210,6 @@ nav(
 
 className="
 bg-green-600
-hover:bg-green-700
 text-white
 px-5
 py-3
@@ -127,9 +222,10 @@ Create User
 
 </button>
 
+
 <button
 
-onClick={()=>{
+onClick={() => {
 
 localStorage.clear();
 
@@ -157,11 +253,13 @@ Logout
 
 </header>
 
+
+
 <div
 className="
 grid
-grid-cols-3
-gap-6
+grid-cols-5
+gap-5
 p-10
 "
 >
@@ -181,12 +279,239 @@ title="Total"
 value={total}
 />
 
+<Card
+title="Weekly"
+value={
+weekly.tea +
+weekly.coffee
+}
+/>
+
+<Card
+title="Monthly"
+value={
+monthly.tea +
+monthly.coffee
+}
+/>
+
 </div>
+
+
+
+<div
+className="
+px-10
+"
+>
+
+<div
+className="
+bg-white
+rounded-xl
+shadow
+p-6
+mb-8
+"
+>
+
+<h2
+className="
+text-xl
+mb-4
+"
+>
+
+Compare Consumption
+
+</h2>
+
+
+<div
+className="
+flex
+gap-3
+"
+>
+
+<input
+
+type="date"
+
+className="
+border
+p-3
+rounded
+"
+
+onChange={
+
+(e)=>
+
+setDay(
+e.target.value
+)
+
+}
+
+/>
+
+
+<button
+
+className="
+bg-green-600
+text-white
+px-5
+rounded
+"
+
+onClick={
+compareDate
+}
+
+>
+
+Compare
+
+</button>
+
+</div>
+
+
+{
+
+compare && (
+
+<div
+className="
+mt-6
+space-y-2
+"
+>
+
+<div>
+
+Today:
+
+Tea {
+compare.today.tea
+}
+
+Coffee {
+compare.today.coffee
+}
+
+</div>
+
+
+<div>
+
+Selected:
+
+Tea {
+compare.selected.tea
+}
+
+Coffee {
+compare.selected.coffee
+}
+
+</div>
+
+</div>
+
+)
+
+}
+
+</div>
+
+</div>
+
+
+
+<div
+className="
+px-10
+"
+>
+
+<div
+className="
+bg-white
+rounded-xl
+shadow
+p-6
+mb-6
+"
+>
+
+<div
+className="
+flex
+gap-3
+"
+>
+
+<input
+
+placeholder="
+Search Name / Email / Employee Code
+"
+
+className="
+border
+flex-1
+p-3
+rounded
+"
+
+onChange={
+
+(e)=>
+
+setQuery(
+e.target.value
+)
+
+}
+
+/>
+
+
+<button
+
+className="
+bg-green-600
+text-white
+px-6
+rounded
+"
+
+onClick={
+search
+}
+
+>
+
+Search
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
 
 <div
 className="
 px-10
 pb-10
+space-y-8
 "
 >
 
@@ -210,6 +535,7 @@ font-bold
 User Consumption
 
 </div>
+
 
 <table
 className="
@@ -253,12 +579,15 @@ Total
 
 </thead>
 
+
 <tbody>
 
 {
 
 rows.map(
-(r:any)=>(
+(
+r:any
+)=>(
 
 <tr
 key={
@@ -267,16 +596,10 @@ r.user
 
 className="
 border-t
-hover:bg-gray-50
 "
 >
 
-<td
-className="
-p-4
-font-medium
-"
->
+<td className="p-4">
 
 {
 r.user
@@ -300,14 +623,153 @@ r.coffee
 
 </td>
 
-<td
+<td>
+
+{
+r.total
+}
+
+</td>
+
+</tr>
+
+)
+
+)
+
+}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+
+<div
 className="
+bg-white
+rounded-xl
+shadow
+p-6
+"
+>
+
+<h2
+className="
+text-2xl
 font-bold
 "
 >
 
+Orders (Last 3 Months)
+
+</h2>
+
+
+<table
+className="
+w-full
+mt-4
+"
+>
+
+<thead>
+
+<tr>
+
+<th>
+
+User
+
+</th>
+
+<th>
+
+Emp Code
+
+</th>
+
+<th>
+
+Drink
+
+</th>
+
+<th>
+
+Qty
+
+</th>
+
+<th>
+
+Date
+
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
 {
-r.total
+
+history.map(
+(
+r:any,
+i
+)=>(
+
+<tr
+key={
+i
+}
+
+className="
+border-t
+"
+>
+
+<td>
+
+{
+r.user
+}
+
+</td>
+
+<td>
+
+{
+r.employee
+}
+
+</td>
+
+<td>
+
+{
+r.drink
+}
+
+</td>
+
+<td>
+
+{
+r.qty
+}
+
+</td>
+
+<td>
+
+{
+r.date
 }
 
 </td>
@@ -334,14 +796,16 @@ r.total
 
 }
 
+
+
 function Card({
 
 title,
 value
 
-}:any){
+}: any) {
 
-return(
+return (
 
 <div
 className="
@@ -366,7 +830,7 @@ title
 
 <div
 className="
-text-6xl
+text-5xl
 font-bold
 mt-4
 "
