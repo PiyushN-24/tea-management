@@ -20,3 +20,6 @@ class User(Base):
     password = Column(String)
 
     role = Column(String, default="user")
+
+    location = Column(String(100))
+

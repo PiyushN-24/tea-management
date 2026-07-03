@@ -12,10 +12,12 @@ class UserCreate(BaseModel):
 
     name: str
 
-    employee_code:str
+    employee_code: str
 
     email: str
 
     password: str
 
     role: str = "user"
+
+    location: str

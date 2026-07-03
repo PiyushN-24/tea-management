@@ -1,0 +1,9 @@
+search_orders(
+    db,
+    query=None,
+    from_date=None,
+    to_date=None,
+    locations=None,
+    page=1,
+    limit=10
+)

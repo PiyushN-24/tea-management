@@ -48,3 +48,17 @@ Order.beverage
 .all()
 
 )
+
+get_today_summary()
+
+get_weekly_summary()
+
+get_monthly_summary()
+
+compare_dates()
+
+consumption_by_location()
+
+top_consumers()
+
+daily_trend()

@@ -13,31 +13,16 @@ class Order(Base):
 
     __tablename__ = "orders"
 
-    id = Column(
-        Integer,
-        primary_key=True
-    )
+    id = Column(Integer,primary_key=True)
 
-    user_id = Column(
-        Integer,
-        ForeignKey("users.id")
-    )
+    user_id = Column(Integer,ForeignKey("users.id"))
 
-    beverage = Column(
-        String,
-        nullable=False
-    )
+    beverage = Column(String,nullable=False)
 
-    quantity = Column(
-        Integer,
-        default=1
-    )
+    quantity = Column(Integer,default=1)
 
-    order_date = Column(
-        Date
-    )
+    order_date = Column(Date)
 
-    created_at = Column(
-        DateTime,
-        server_default=func.now()
-    )
+    created_at = Column(DateTime,server_default=func.now())
+
+    location = Column(String(100), nullable=False)

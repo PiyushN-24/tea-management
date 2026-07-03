@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("")
 def create_order(
     data: OrderCreate,
     db: Session = Depends(get_db)
@@ -62,25 +62,15 @@ def create_order(
         )
 
     order = Order(
-
-        user_id=
-        data.user_id,
-
-        beverage=
-        data.beverage,
-
-        quantity=
-        data.quantity,
-
-        order_date=
-        today
-
+        user_id=data.user_id,
+        beverage=data.beverage,
+        quantity=data.quantity,
+        order_date=today,
+        location=data.location
     )
 
     db.add(order)
-
     db.commit()
-
     db.refresh(order)
 
     return {
