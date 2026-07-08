@@ -98,7 +98,7 @@ async function loadUsers(currentPage = page) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 text-slate-900 dark:text-white p-8">
 
       <div className="max-w-7xl mx-auto">
 
@@ -107,25 +107,27 @@ async function loadUsers(currentPage = page) {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
             User Management ({total})
           </h1>
+
           <button
             onClick={() => nav("/admin")}
-            className="bg-gray-700 text-white px-5 py-2 rounded"
+            className="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded"
           >
             Back
           </button>
 
         </div>
 
-        <div className="bg-white rounded-xl shadow p-6 mb-8">
+        {/* Create / Edit User */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 mb-8">
 
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
             {editingId ? "Edit User" : "Create User"}
           </h2>
 
           <div className="grid grid-cols-2 gap-4">
 
             <input
-              className="border rounded p-3"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               placeholder="Full Name"
               value={form.name}
               onChange={(e) =>
@@ -134,7 +136,7 @@ async function loadUsers(currentPage = page) {
             />
 
             <input
-              className="border rounded p-3"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               placeholder="Employee Code"
               value={form.employee_code}
               onChange={(e) =>
@@ -146,7 +148,7 @@ async function loadUsers(currentPage = page) {
             />
 
             <input
-              className="border rounded p-3"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               placeholder="Email"
               value={form.email}
               onChange={(e) =>
@@ -159,7 +161,7 @@ async function loadUsers(currentPage = page) {
 
             <input
               type="password"
-              className="border rounded p-3"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               placeholder={
                 editingId
                   ? "Leave blank to keep password"
@@ -175,7 +177,7 @@ async function loadUsers(currentPage = page) {
             />
 
             <select
-              className="border rounded p-3"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               value={form.location}
               onChange={(e) =>
                 setForm({
@@ -191,7 +193,7 @@ async function loadUsers(currentPage = page) {
             </select>
 
             <select
-              className="border rounded p-3"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               value={form.role}
               onChange={(e) =>
                 setForm({
@@ -210,7 +212,7 @@ async function loadUsers(currentPage = page) {
 
             <button
               onClick={save}
-              className="bg-green-600 text-white px-6 py-3 rounded"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded"
             >
               {editingId ? "Update User" : "Create User"}
             </button>
@@ -221,7 +223,7 @@ async function loadUsers(currentPage = page) {
                   setEditingId(null);
                   setForm(emptyForm);
                 }}
-                className="bg-gray-500 text-white px-6 py-3 rounded"
+                className="bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded"
               >
                 Cancel
               </button>
@@ -231,17 +233,18 @@ async function loadUsers(currentPage = page) {
 
         </div>
 
-        <div className="bg-white rounded-xl shadow p-6">
+        {/* Users Table */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6">
 
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between items-center mb-4">
 
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
               Users
             </h2>
 
             <input
               placeholder="Search Name / Email / Employee Code"
-              className="border rounded p-3 w-96"
+              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3 w-96"
               value={search}
               onChange={(e) =>
                 setSearch(e.target.value)
@@ -251,7 +254,9 @@ async function loadUsers(currentPage = page) {
           </div>
 
           <table className="w-full">
-            <thead className="bg-gray-100">
+
+            <thead className="bg-gray-100 dark:bg-slate-700">
+
               <tr>
                 <th className="p-3 text-left">Emp Code</th>
                 <th className="text-left">Name</th>
@@ -260,15 +265,18 @@ async function loadUsers(currentPage = page) {
                 <th className="text-left">Role</th>
                 <th className="text-center">Action</th>
               </tr>
+
             </thead>
+
             <tbody>
 
               {filteredUsers.map((u) => (
 
                 <tr
                   key={u.id}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b border-slate-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
                 >
+
                   <td className="p-3">{u.employee_code}</td>
 
                   <td>{u.name}</td>
@@ -283,7 +291,7 @@ async function loadUsers(currentPage = page) {
 
                     <button
                       onClick={() => editUser(u)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
                     >
                       Edit
                     </button>
