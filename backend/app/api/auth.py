@@ -42,7 +42,10 @@ def login(
 
     return {
         "id": user.id,
+        "name": user.name,
+        "employee_code": user.employee_code,
         "email": user.email,
+        "location": user.location,
         "role": user.role
     }
 

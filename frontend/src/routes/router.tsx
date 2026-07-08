@@ -1,56 +1,32 @@
-import {createBrowserRouter, Navigate}
-from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
-import MyOrders from "../pages/MyOrders";
 import AdminDashboard from "../pages/AdminDashboard";
-import CreateUser from "../pages/CreateUser";
-import ResetPassword
-from "../pages/ResetPassword";
+import UserManagement from "../pages/UserManagement";
+import ResetPassword from "../pages/ResetPassword";
 
-function AdminRoute({
-  children
-}: any) {
+function AdminRoute({ children }: any) {
+  const user = JSON.parse(
+    localStorage.getItem("user") || "{}"
+  );
 
-  const user =
-    JSON.parse(
-      localStorage.getItem(
-        "user"
-      ) || "{}"
-    );
-
-  if (
-    user.role !== "admin"
-  ) {
-
-    return (
-      <Navigate to="/dashboard" />
-    );
-
+  if (user.role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
-
 }
 
-
-export const router =
-
-createBrowserRouter([
-
+export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />
+    element: <Login />,
   },
 
   {
     path: "/dashboard",
-    element: <Dashboard />
-  },
-
-  {
-    path: "/orders",
-    element: <MyOrders />
+    element: <Dashboard />,
   },
 
   {
@@ -59,29 +35,29 @@ createBrowserRouter([
       <AdminRoute>
         <AdminDashboard />
       </AdminRoute>
-    )
+    ),
   },
 
   {
     path: "/admin/users",
     element: (
       <AdminRoute>
-        <CreateUser />
+        <UserManagement />
       </AdminRoute>
-    )
+    ),
   },
 
   {
-    path:"/reset",
-    element:<ResetPassword/>
+    path: "/reset",
+    element: <ResetPassword />,
   },
 
   {
-    errorElement: (
-      <div>
-        Page Not Found
+    path: "*",
+    element: (
+      <div className="min-h-screen flex items-center justify-center text-2xl font-semibold">
+        404 - Page Not Found
       </div>
-    )
-  }
-
+    ),
+  },
 ]);

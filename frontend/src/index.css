@@ -1,17 +1,39 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 html,
 body,
-#root{
-height:100%;
-margin:0;
-padding:0;
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-body{
-background:#f3f4f6;
-font-family:
-Inter,
-system-ui,
-sans-serif;
+body {
+  background: #f3f4f6;
+  color: #0f172a;
+  font-family: Inter, system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.94);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
