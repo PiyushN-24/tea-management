@@ -99,42 +99,25 @@ async function loadUsers(currentPage = page) {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-slate-900 text-slate-900 dark:text-white p-8">
-
       <div className="max-w-7xl mx-auto">
-
         <div className="flex justify-between items-center mb-6">
-
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
             User Management ({total})
           </h1>
-
-          <button
-            onClick={() => nav("/admin")}
-            className="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded"
-          >
+          <button onClick={() => nav("/admin")} className="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded">
             Back
           </button>
-
         </div>
 
         {/* Create / Edit User */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 mb-8">
-
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
             {editingId ? "Edit User" : "Create User"}
           </h2>
-
           <div className="grid grid-cols-2 gap-4">
 
-            <input
-              className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
-              placeholder="Full Name"
-              value={form.name}
-              onChange={(e) =>
-                setForm({ ...form, name: e.target.value })
-              }
-            />
-
+            <input className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3" placeholder="Full Name"
+              value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}/>
             <input
               className="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded p-3"
               placeholder="Employee Code"
